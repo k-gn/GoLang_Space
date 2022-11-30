@@ -1,5 +1,7 @@
 package main
 
+import "fmt"
+
 /*
 	main.go file 은 프로젝트가 컴파일을 해야할 경우 필요하다. (진입점)
 	이 외의 파일명은 컴파일 되지 않는다. (ex. learning.go) 기능의 묶음 혹은 다른 사람들이 사용할 것들
@@ -8,7 +10,7 @@ package main
 
 func main() {
 	/*
-		function 을 export 대문자로 시작
+		function 을 export 할 경우 대문자로 시작
 
 			something.SayHello() (O)
 			something.sayBye()	(X)
@@ -39,9 +41,11 @@ func main() {
 		# Function
 
 		- return int
+
 			func multiply(a int, b int) int {
 				return a * b
 			}
+
 
 		- 같은 타입의 파라미터인 경우
 			func multiply(a, b int) int {
@@ -49,11 +53,13 @@ func main() {
 			}
 
 		- void
+
 			func multiply(a, b int) {
 				fmt.Println(a * b)
 			}
 
 		- multiple return
+
 			func lenAndUpper(name string) (int, string) {
 				return len(name), strings.ToUpper(name)
 			}
@@ -64,12 +70,14 @@ func main() {
 			totalLength, _ := lenAndUpper("gyunam")
 
 		- multiple argument
+
 			func repeatMe(words ...string) {
 				fmt.Println(words)
 			}
 			repeatMe("gyunam", "donggyu", "techan")
 
 		- naked return (return 할 값을 꼭 명시하지 않아도 된다.)
+
 			func lenAndUpper(name string) (length int, uppercase string) {
 				// 이 때 := 로 생성하는 것이 아니라 업데이트 하는 것!
 				length = len(name)
@@ -78,6 +86,7 @@ func main() {
 			}
 
 		- defer (함수가 끝날 때 추가적으로 무엇인가 동작시킬 수 있다! Cool)
+
 			func lenAndUpper(name string) (length int, uppercase string) {
 				defer fmt.Println("is done")
 
@@ -91,5 +100,136 @@ func main() {
 
 	/*
 		# Loop
+
+		func superAdd(numbers ...int) int {
+			total := 0
+			for _, number := range numbers {
+				total += number
+			}
+			return total
+		}
+
+		total := superAdd(1, 2, 3, 4, 5)
+		fmt.Println(total)
+
+		- for [var] := range [array]
+
+			func superAdd(numbers ...int) {
+				fmt.Println(numbers)
+
+				for index, number := range numbers {
+					fmt.Println(index, number)
+				}
+
+				for _, number := range numbers {
+					fmt.Println(number)
+				}
+			}
+
+		- basic for
+
+			func superAdd(numbers ...int) {
+				fmt.Println(numbers)
+
+				for i := 0; i < len(numbers); i++ {
+					fmt.Println(numbers[i])
+				}
+			}
 	*/
+
+	/*
+		# If Else
+
+		- basic if
+
+			func catIDrink(age int) bool {
+				if age < 18 {
+					return false
+				} else {
+					return true
+				}
+			}
+
+		- create variable (if 안에서만 사용)
+
+			func catIDrink(age int) bool {
+				if koreanAge := age + 2; koreanAge < 18 {
+					return false
+				} else {
+					return true
+				}
+			}
+	*/
+
+	/*
+		# switch
+
+		- basic switch
+			func catIDrink(age int) bool {
+				switch age {
+				case 10:
+					return false
+				case 18:
+					return true
+				}
+				return false
+			}
+
+		- switch case 에 조건 넣기
+
+			func catIDrink(age int) bool {
+				switch {
+				case age < 10:
+					return false
+				case age == 18:
+					return true
+				}
+				return false
+			}
+
+		- add variable
+
+			switch koreanAge := age + 2; koreanAge {
+				case 10:
+					return false
+				case 18:
+					return true
+				}
+				return false
+			}
+	*/
+
+	/*
+		# Pointers
+
+		- 메모리 관련 기능 (Low-level Programming)
+		- & 기호로 메모리 주소를 볼 수 있다.
+		- * 기호로 메모리 주소의 값을 볼 수 있다.
+		- 서로 연결되어 있는 개념 (메모리에 저장된 객체를 서로 똑같이 가지고 싶을 때 사용한다. - 계속 복사본을 만드는게 아님)
+
+		a := 2
+		b := &a // b 는 a 를 살펴보는 "포인터" 가 된다.
+		fmt.Println(a, b)
+		fmt.Println(*b)
+
+		a = 5
+		fmt.Println(a, b)
+		fmt.Println(*b)
+
+		*b = 20
+		fmt.Println(a)
+
+	*/
+
+	a := 2
+	b := &a
+	fmt.Println(a, b)
+	fmt.Println(*b)
+
+	a = 5
+	fmt.Println(a, b)
+	fmt.Println(*b)
+
+	*b = 20
+	fmt.Println(a)
 }
