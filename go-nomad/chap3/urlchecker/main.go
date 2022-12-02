@@ -6,8 +6,14 @@ import (
 	"net/http"
 )
 
+type requestResult struct {
+	url    string
+	status string
+}
+
 func main() {
-	var results = make(map[string]string) // make init => empty map
+	results := make(map[string]string) // make init => empty map
+	c := make(chan requestResult)
 	urls := []string{
 		"https://www.airbnb.com/",
 		"https://www.google.com/",
@@ -20,30 +26,30 @@ func main() {
 	}
 
 	for _, url := range urls {
-		result := "OK"
-		err := hitUrl(url)
-		if err != nil {
-			result = "FAILED"
-		}
-		results[url] = result
+		go hitUrl(url, c)
 	}
 
-	for url, result := range results {
-		fmt.Println(url, result)
+	for i := 0; i < len(urls); i++ {
+		result := <-c
+		results[result.url] = result.status
 	}
 
+	for url, status := range results {
+		fmt.Println(url, status)
+	}
 }
 
 var errRequestFailed = errors.New("Request failed")
 
-func hitUrl(url string) error {
-
-	fmt.Println("Checking: ", url)
+// 보내기만 가능하고 받을 순 없는 채널을 설정할 수도 있다.
+// func hitUrl(url string, c chan<- result) {
+func hitUrl(url string, c chan requestResult) {
+	// fmt.Println(<-c) // 채널로부터 받을 수도 있다.
 	resp, err := http.Get(url)
-
+	status := "OK"
 	if err != nil || resp.StatusCode >= 400 {
-		return errRequestFailed
+		status = "FAILED"
 	}
 
-	return nil
+	c <- requestResult{url: url, status: status}
 }
