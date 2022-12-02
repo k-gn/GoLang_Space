@@ -37,11 +37,13 @@ func main() {
 		cards = append(cards, getCards...)
 	}
 
-	writeJobs(cards)
+	writeCards(cards)
+
 	fmt.Println("Done, extracted ", len(cards))
 }
 
-func writeJobs(cards []extractedCard) {
+func writeCards(cards []extractedCard) {
+	write := make(chan error)
 	// create writer -> input data -> save
 	file, err := os.Create("cards.csv")
 	checkErr(err)
@@ -54,10 +56,15 @@ func writeJobs(cards []extractedCard) {
 	checkErr(wErr)
 
 	for _, card := range cards {
-		cardSlice := []string{card.id, card.title, card.writer, card.count}
-		cwErr := w.Write(cardSlice)
-		checkErr(cwErr)
+		go writeCsv(w, card, write)
+		err := <-write
+		checkErr(err)
 	}
+}
+
+func writeCsv(w *csv.Writer, card extractedCard, write chan<- error) {
+	cardSlice := []string{card.id, card.title, card.writer, card.count}
+	write <- w.Write(cardSlice)
 }
 
 func getPage(page int, mainC chan<- []extractedCard) {
